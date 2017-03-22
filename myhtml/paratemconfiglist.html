@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<HEAD> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+<meta http-equiv="content-encoding" charset="utf-8" />
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache"> 
+<META HTTP-EQUIV="Expires" CONTENT="0"> 
+</HEAD>
+
+<body>
+<script>
+    function submitdata()
+    {
+        console.log("start .....");
+        var tabletemp = document.getElementById("commutable").chidNodes;
+
+    //    console.log("%s", x.firstChild.nodeName);
+   //     console.log("%s", x.firstChild.nodeValue);
+    }
+</script>
+    <div>
+        <script>
+            document.write("点击按钮下发配置");
+        </script>
+    </div>
+    <div id="commu">
+    </div>
+
+
+    <script type="text/javascript">
+        function PainTable(result)
+        {
+            try {
+                var json = eval(result);
+                var i = 0;                
+                var txt = "";
+                    txt += "<p>获取数据时间:" +new Date().toLocaleString()+'星期'+'日一二三四五六'.charAt(new Date().getDay());'',1000 + "</p>";                    
+                  //  txt += "<table id='commutable' border='1' cellpadding='8'>";
+                    txt += "<table id='commutable' >";
+                for (var obj in json) {
+                    var jobj = json[obj];
+                  //  console.log("i: ,i取余数:%d", i, i % 3);
+                    if (i % 3 == 0)
+                        txt += "<tr>";
+                    for (var cell in json[obj]) {
+                        var value = jobj[cell];
+                        txt += "<td>"
+                            + "<button type='button' style='font-size:16px;width:116px;height: 34px;padding-bottom: 0px;padding-left:0px;'>" + json[obj][cell] + "</button>"
+                            + "<input type=text size=16 name="+ obj + " style='font-size:20px;width:152px;height: 26px;' value=" + cell + ">"
+                            + "</td>";
+                    }
+                    if (i % 2 == 3)
+                        txt += "</tr>";
+                    // debugger;
+                    i++;
+                }
+                txt += "</table>";              
+                document.getElementById("commu").innerHTML = txt;
+            } catch (e) {
+                console.log("json数据转换错误");
+            }
+        }
+
+        function GetCGIdata() {
+            var xmlhttp;
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            }
+            else {// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange = function ()
+            {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                {
+                    var result = xmlhttp.responseText;
+                    console.log("得到返回数据:%s", result);
+                    //debugger;
+                    PainTable(result)
+                }
+            }
+            var url = "../cgi-bin/test.cgi";
+            xmlhttp.open("post", url, true);
+            xmlhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+            
+            xmlhttp.send("EquipID=03111234    #设置ID&PhoneCall=15860725393    #手机号&Ip=192.168.100.77    #IP地址");
+        }
+        GetCGIdata();
+    </script> 
+    <button type='button' onclick="submitdata()">点击提交</button>
+</body>
+</html>

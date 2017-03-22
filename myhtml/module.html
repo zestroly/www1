@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>测试上传文件</title>
+    <style type="text/css">
+        * {font-size:12px;margin:0;}
+        body {background:#fff;}
+        form {margin:12px;}
+        input.file{
+            vertical-align:middle;
+            position:relative;
+            left:-218px;
+            filter:alpha(opacity=0);
+            opacity:0;
+            z-index:1;
+            *width:223px;
+        }
+
+        form input.viewfile {
+            z-index:99;
+            border:1px solid #ccc;
+            padding:2px;
+            width:150px;
+            vertical-align:middle;
+            color:#999;
+        }
+
+        form p span {
+            float:left;
+        }
+
+        form label.bottom {
+            border:1px solid #38597a;
+            background:#4e7ba9;
+            color:#fff;
+            height:19px;
+            line-height:19px;
+            display:block;
+            width:60px;
+            text-align:center;
+            cursor:pointer;
+            float:left;
+            position:relative;
+            *top:1px;
+        }
+
+        form input.submit {
+            border:0;
+            background:#380;
+            width:70px;
+            height:22px;
+            line-height:22px;
+            color:#fff;
+            cursor:pointer;
+        }
+
+        p.clear {
+            clear:left;
+            margin-top:12px;
+        }
+
+    </style>
+</head>
+
+<body>
+<form action="" method="post" name="upfiles" enctype="multipart/form-data">
+    <p>
+	<span>
+		<label for="viewfile">上传文件：</label>
+		<input type="text" name="viewfile" id="viewfile" class="viewfile" />
+	</span>
+        <label for="upload" class="bottom">查找文件</label><input type="file" size="27" name="upload" onchange="document.getElementById('viewfile').value=this.value;" class="file" />
+    </p>
+    <p class="clear"><input class="submit" type="submit" value="确定上传" /></p>
+</form>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<HEAD> 
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+<meta http-equiv="content-encoding" charset="utf-8" />
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache"> 
+<META HTTP-EQUIV="Expires" CONTENT="0"> 
+<link rel="stylesheet" href="../css/lvv.css" type="text/css" media="screen"/>
+
+<title>配置文件</title>
+</HEAD>
+
+<body>
+    <center> <h2>state文件配置</h2> </center> <hr />
+   
+    <div id="state">
+    </div>
+
+
+    <script type="text/javascript">
+        function GetDataFromTable()
+        {
+            var jsondata = "";
+            try {
+				var tableDat=document.getElementById("stateconf");
+				var inputDat=tableDat.getElementsByTagName("input");
+				if(tableDat.rows.length<1)
+				{
+					return "";
+				}
+				for(var i=0;i<tableDat.rows.length;i++)
+				{
+					var item_name=tableDat.rows[i].cells[0].innerText;
+					var item_value=inputDat[i].value;
+					var item_note=tableDat.rows[i].cells[2].innerText;
+					jsondata += item_name + "=" + item_value + "             #" + item_note + "&";
+				}
+            } catch (e) {
+                console.log("获取表单中的数据失败");
+                return "";
+            }
+           // console.log("获取表单中的数据成功，data: %s",jsondata);
+            return jsondata;
+        }
+	
+        function submitdata()
+        {            
+            var data = GetDataFromTable();
+            if (data.length > 2)
+            {
+				var datasend = "filename=state&cmd=write&" + data;
+				console.log("提交数据为:%s",datasend);
+                GetCGIdata(datasend);
+            } else {
+                console.log("表单中没有可获取的数据");
+            }
+        }
+	
+        function PainTable(result)
+        {
+            try {
+                var json = eval(result);
+                var i = 0;                
+                var txt = "";
+                    txt += "<p>获取数据时间:" +new Date().toLocaleString()+'星期'+'日一二三四五六'.charAt(new Date().getDay());'',1000 + "</p>";                    
+                    txt += "<button type='button' style='background:#F1F666;color: red; font-size:20px'  onclick='submitdata()'>点击提交</button> <br \>";
+                    txt += "<table id='stateconf' class='conftable' cellspacing='0' >";
+                for (var obj in json)
+                {
+                    txt += "<tr>";
+                    var jobj = json[obj];
+                    for (var cell in json[obj]) {
+                        txt += "<td>" +obj + "</td>";
+                        txt += "<td style='padding:0px'><input style='font-weight:bold'  value=" +cell + " /></td>";
+                        txt += "<td style='font-weight:bold'>" +json[obj][cell] + "</td>";
+                    }
+                    txt += "</tr>";
+                }
+                txt += "</table>";              
+                document.getElementById("state").innerHTML = txt;
+            } catch (e) {
+                console.log("json数据转换错误:%s",e);
+            }
+        }
+		
+
+        function GetCGIdata(data) 
+		{
+			//var result=({ BusStop_SpeedLimit:{"5":"站点限速"}, BusStop_DecSpeed:{"-1":"站点减速"}, BusStop_TimeSec:{"1":"站点时间/s"}, BusStop_AllowSpeed:{"2":"站点允许速度"}, BusStart_SpeedLimit:{"5":"车启动限速"}, BusStart_TimeSec:{"1":"车启动时间"}, BusStart_AddSpeed:{"1":"车启动加速"}, BusNoneDear_SpeedLimit:{"20":"车空挡限速"}, BusNoneDear_Sec:{"7":"车空挡时间"}, BusReverse_SpeedLimit:{"20":"车倒挡限速"}, BusReverse_AddSpeedLimit:{"5":"车倒挡限加速"}, NightDriver_LHour:{"23":"夜间行驶低/H"}, NightDriver_LMin:{"0":"夜间行驶低/M"}, NightDriver_HHour:{"07":"夜间行驶高/H"}, NightDriver_HMin:{"0":"夜间行驶高/M"}, BusStartFastAdd_AddSpeed:{"7":"车启动急加速"}, BusFlameout_Speed:{"5":"熄火滑行车速"}, BusFastAdd_AddSpeed:{"10":"车急加速"}, BusFastDec_DecSpeed:{"-10":"车急减速"}, BusFastBrake_DecSpeed:{"-15":"车急刹"}, SpeedLimit:{"60":"限速值"}, AllowOverSpeed:{"20":"允许平均速度"}, LineNum:{"3333":"线路号"}, isNeedSafeNoStopDoOpenDoor:{"1":"未停稳开车门"}, isNeedSafeDriveNoCloseOpenDoor:{"1":"未关车门行驶"}, isNeedSafeNeutralGlide:{"1":"空挡滑行标志"}, isNeedSafeBackCarSpeedOver:{"1":"倒车超速标志"}, isNeedSafeABSBreaker:{"1":"ABS报警标志"}, isNeedSafeNightDriver:{"1":"夜间行驶标志"}, isNeedSafeCarStartDrive:{"1":"启动车速标志"}, isNeedSafeFlameoutSpeed:{"1":"熄火滑行标志"}, isNeedSafeQuickAddSpeed:{"1":"急加速标志"}, isNeedSafeQuickDecSpeed:{"1":"急减速标志"}, isNeedSafeQuickBraker:{"1":"急刹车标志"}, isNeedSafeLaBa:{"0":"文明鸣笛"}, CarTableNum:{"LL3AGCJ41FA013046":"台架号"}, RotationalToRun:{"100":"发动机有限转速最低限"}, IdleRangeL0:{"600":"怠速时间低"}, IdleRangeH0:{"700":"怠速时间高"}, LowEngineSpeedRangeL0:{"701":"发动机低转速低区间"}, LowEngineSpeedRangeH0:{"1000":"发动机低转速高区间"}, EconomyEngineSpeedRangeL0:{"1001":"发动机经济转速低区间"}, EconomyEngineSpeedRangeH0:{"1300":"发动机经济转速高区间"}, GreenRangeL0:{"1301":"发动机绿区转速低区间"}, GreenRangeH0:{"1600":"发动机绿区转速高区间"}, HighEngineSpeedRangeL0:{"1601":"发动机高转速低区间"}, HighEngineSpeedRangeH0:{"2000":"发动机高转速高区间"}, ExceedEngineSpeedRangeL0:{"2001":"发动机超转速最低限"}, ReverseEnginSpeedRangeH0:{"0":"发动机反转速最高限"}, HRotationalLSpeedEngineSpeed0:{"1600":"低车速发动机高转速"}, HRotationalLSpeedCanSpeed0:{"10":"发动机高转速低车速"}, LRotationalHSpeedEngineSpeed0:{"700":"高车速发动机低转速"}, LRotationalHSpeedCanSpeed0:{"30":"发动机低转速高车速"}, EconomyCanSpeedL0:{"20":"经济车速低区间"}, EconomyCanSpeedH0:{"35":"经济车速高区间"}, KongTiaoIdlingRangeL0:{"600":"空调怠速低区间（发动机）"}, KongTiaoIdlingRangeH0:{"750":"空调怠速高区间（发动机）"}, IdleRangeL1:{"0":"电机怠速低区间"}, IdleRangeH1:{"1":"电机怠速高区间"}, LowEngineSpeedRangeL1:{"2":"电机低转速低区间"}, LowEngineSpeedRangeH1:{"1000":"电机低转速高区间"}, EconomyEngineSpeedRangeL1:{"1001":"电机经济转速低区间"}, EconomyEngineSpeedRangeH1:{"1300":"电机经济转速高区间"}, GreenRangeL1:{"1301":"电机绿区转速低区间"}, GreenRangeH1:{"1600":"电机绿区转速高区间"}, HighEngineSpeedRangeL1:{"1601":"电机高转速低区间"}, HighEngineSpeedRangeH1:{"2000":"电机高转速高区间"}, ExceedEngineSpeedRangeL1:{"2001":"电机超转速最低限"}, ReverseEnginSpeedRangeH1:{"-1":"电机反转最高限"}, HRotationalLSpeedEngineSpeed1:{"1600":"低车速电机高转速"}, HRotationalLSpeedCanSpeed1:{"10":"电机高转速低车速"}, LRotationalHSpeedEngineSpeed1:{"700":"高车速电机低转速"}, LRotationalHSpeedCanSpeed1:{"30":"电机低转速高车速"}, KongTiaoIdlingRangeL1:{"650":"空调怠速低区间（电机）"}, KongTiaoIdlingRangeH1:{"750":"空调怠速高区间（电机）"}, StationLostNum:{"2":"站点丢失个数"}, BanMaXianFlag:{"0":"斑马线上报标志"}, });
+			//var result=({BusStop_SpeedLimit:{"5":"站点限速"}, BusStop_DecSpeed:{"-1":"站点减速"}});
+			//PainTable(result);
+	
+            var xmlhttp;
+            //判断浏览器类型 创建XMLHttpRuquest对象
+            if (window.XMLHttpRequest) 
+			{// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            }
+            else 
+			{// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange = function ()
+            {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                {
+                    var result = xmlhttp.responseText;
+                    console.log("得到返回数据:%s", result);
+                    PainTable(result);
+                }
+            }
+            var url = "../cgi-bin/test.cgi";
+            xmlhttp.open("post", url, true);
+            xmlhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");            
+            xmlhttp.send(data);
+        }
+        GetCGIdata("filename=state&cmd=read");
+    </script> 
+</body>
+</html>

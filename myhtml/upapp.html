@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<HEAD>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="content-encoding" charset="utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>应用程序升级</title>
+</HEAD>
+
+<body>
+<center> <h2>应用程序升级</h2>  </center> <hr />
+
+<iframe style="display: none;" id="iframe" name="iframe"></iframe>
+<script>
+    //监听选择文件信息
+    function fileSelected(filepath)
+    {
+        var file = document.getElementById('fileName').files[0];
+        if (file) {
+            var fileSize = 0;
+            if (file.size > 1024 * 1024)
+                fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
+            else
+                fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + 'KB';
+
+            document.getElementById('filePath').innerHTML = 'Name: ' + filepath;
+            document.getElementById('fileSize').innerHTML = 'Size: ' + fileSize;
+            document.getElementById('fileType').innerHTML = 'Type: ' + file.type;
+        }
+    }
+
+
+
+    function uploadfile()
+    {
+        if (document.getElementById('fileName').files.length == 0)
+        {
+            document.getElementById('warning').innerHTML = "升级文件不能为空!";
+            if (document.getElementById('warning').style.color == "red") {
+                document.getElementById('warning').style.color = "blue";
+            } else {
+                document.getElementById('warning').style.color = "red";
+            }
+            return
+        }
+        document.getElementById('warning').innerHTML = "";
+        var xhr = new XMLHttpRequest();
+        var fd = new FormData();
+        fd.append("fileName", document.getElementById('fileName').files[0]);
+
+        //监听事件
+        xhr.upload.addEventListener("progress", uploadProgress, false);
+        xhr.addEventListener("load", uploadComplete, false);
+        xhr.addEventListener("error", uploadFailed, false);
+        xhr.addEventListener("abort", uploadCanceled, false);
+        //   xhr.addEventListener("", ,false);
+        xhr.open("POST", "/cgi-bin/transferfile.cgi");
+        xhr.send(fd);
+    }
+
+    //上传进度
+    function uploadProgress(evt)
+    {
+        if (evt.lengthComputable)
+        {
+            var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+            document.getElementById('progressNumber').innerHTML = "上传文件:" + percentComplete.toString() + '%';
+        }
+        else
+        {
+            document.getElementById('progressNumber').innerHTML = 'unable to compute';
+            document.getElementById('progressNumber').style.color = "red";
+        }
+    }
+
+    //上传成功响应
+    function uploadComplete(evt) {
+        //服务断接收完文件返回的结果
+        //alert(evt.target.responseText);
+        document.getElementById('textlog').innerHTML = "文件存放路径:"+ evt.target.responseText;
+        GetCGIdata(evt.target.responseText);
+    }
+
+    //上传失败
+    function uploadFailed(evt) {
+        document.getElementById('textlog').innerHTML = "文件上传失败";
+    }
+    //取消上传
+    function uploadCanceled(evt) {
+        document.getElementById('textlog').innerHTML = "文件上传取消";
+    }
+
+    var t;
+    function GetCGIdata(data)
+    {
+        var xmlhttp;
+        if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        }
+        else
+        {// code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function ()
+        {
+            if (xmlhttp.readyState == 3)
+            {
+                var result = xmlhttp.responseText;
+
+                var re = result.split("\n");
+
+                if (document.getElementById('warning').style.color == "red")
+                {
+                    document.getElementById('warning').style.color = "blue";
+                } else {
+                    document.getElementById('warning').style.color = "red";
+                }
+                console.log("当前下载进度:%s", re[re.length - 2]);
+                document.getElementById('upProgressBar').innerHTML = "升级:" + re[re.length - 2];
+            }
+
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+            {
+                var result = xmlhttp.responseText;
+                console.log("4:得到返回数据:%s", result);
+                var re = result.split("\n");
+                if(re[re.length-2] == "成功")
+                {
+                    document.getElementById('upProgressBar').innerHTML = "升级:" + "成功";
+                    document.getElementById('upProgressBar').style.color = "blue";
+                    document.getElementById('warning').style.color = "blue";
+                }else{
+                    document.getElementById('upProgressBar').innerHTML = "升级:" + "失败";
+                    document.getElementById('upProgressBar').style.color = "red";
+                    document.getElementById('warning').style.color = "red";
+                }
+                document.getElementById('upProgressBar').innerHTML = "升级:" + re[re.length-2];
+                // document.getElementById('callback').innerHTML = result;
+            }
+            //   console.log("得到返回数据:%s", result);
+        }
+        var url = "../cgi-bin/UpdateMCU.cgi";
+    //    xmlhttp.open("post", url, true);
+    //    xmlhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+    //    xmlhttp.send(data);
+        document.getElementById('upProgressBar').innerHTML = "升级中";
+        document.getElementById('warning').innerHTML = "正在升级单片机，请勿点击其他操作";
+    }
+
+    function upProgressBar()
+    {
+
+        if (document.getElementById('upProgressBar').innerHTML.length < 15)
+            document.getElementById('upProgressBar').innerHTML += ".";
+        else
+            document.getElementById('upProgressBar').innerHTML = "升级中";
+    }
+
+
+
+</script>
+
+<form enctype="multipart/form-data" method="post" action="/cgi-bin/transferfile.cgi" target="iframe">
+    <div class="row">
+        <label for="fileToUpload">选择文件</label>
+        <input type="file" name="fileName" id="fileName" onchange="fileSelected(this.value);" />
+    </div>
+    <div id="filePath"></div>
+    <div id="fileSize"></div>
+    <div id="fileType"></div>
+    <div class="row">
+        <input type="button" value="上传" onclick="uploadfile()" />
+    </div>
+    <div id="progressNumber"></div>
+    <div id="textlog"></div>
+    <div id="upProgressBar"></div>
+    <div id="callback"></div>
+    <div id="warning" style="color: red; font-size:20px"></div>
+</form>
+
+</body>
+</html>

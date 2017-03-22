@@ -1,0 +1,104 @@
+
+.tyrediv{
+	border:solid;
+	border-width:1px 1px 0px 1px;
+	border-color:#DCDCDC;
+	width:775px;
+	height:200px;
+}
+/*点（.）的前面要空格表示从属关系，如果不加空格表示合并的关系*/
+.tyrediv .divA{
+	border:none;
+	margin:1px;
+	/*background:#ECF7F0;*/
+	background:#D9EDE1;
+	height:198px;
+}
+.tyrediv .divA div{
+    background:#AED9C1;
+}
+
+.tyrediv .divA div h3{
+    margin:0px;
+    padding:5px 5px 5px 20px;
+}
+/*冒号前后不能有空格*/
+.tyrediv:last-child{
+	border-bottom:1px solid #add9c0;
+}
+.tyretable{
+    border:solid #add9c0; 
+	border-width:1px 0px 0px 1px;
+	margin:15px 10px 10px 20px;
+}
+.tyretable td{
+    font-size:16px;
+    border:solid #add9c0;
+    border-width:0px 1px 1px 0px;
+    padding:10px;
+    width:100px;
+}
+
+.busstatusdiv{
+	padding:1px;
+	border:solid;
+	border-width:1px 1px 0px 1px;
+	border-color:#DCDCDC;
+}
+.busstatusdiv  .divA{
+	border:none;
+	background:#D9EDE1;
+}
+.busstatusdiv .divA div{
+    background:#AED9C1;
+}
+.busstatusdiv .divA div h3{
+    margin:0px;
+    padding:5px 5px 5px 10px;
+}
+.busstatustable{
+    border:solid #add9c0; 
+	border-width:1px 0px 0px 1px;
+	margin:15px 10px 5px 10px;
+	padding:0px;
+}
+.busstatustable .td1{
+    font-size:14px;
+    border:solid #add9c0;
+    border-width:0px 1px 1px 0px;
+    padding:10px 5px 10px 5px;
+    width:200px;
+}
+.busstatustable .td2{
+    font-size:14px;
+    border:solid #add9c0;
+    border-width:0px 1px 1px 0px;
+    padding:10px;
+    width:72px;
+}
+.busstatusdiv:last-child{
+	border-bottom:1px solid #add9c0;
+}
+
+.conftable{
+	border:solid #add9c0; 
+	border-width:1px 0px 0px 1px;
+	margin:15px 15px 10px 20px;
+	background:#D9EDE1;
+}
+.conftable td{
+	font-size:16px;
+    border:solid #add9c0;
+    border-width:0px 1px 1px 0px;
+    padding:10px;
+    width:250px;
+	height:20px;
+}
+.conftable td input{
+	border:none;
+	padding:0px 10px;
+	margin:0px;
+	width:270px;
+	height:40px;
+	background:#D9EDE1;
+}

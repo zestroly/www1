@@ -1,0 +1,364 @@
+﻿<!DOCTYPE html>
+<html>
+<HEAD>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="content-encoding" charset="utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="../css/table.css" type="text/css" media="screen"/>
+	<link rel="stylesheet" href="../css/lvv.css" type="text/css" media="screen"/>
+    <title></title>
+
+</HEAD>
+
+<body>
+<center> <h2 id="displayhead"></h2>  </center> <hr />
+<div id="listdata"></div>
+
+<style>
+    .MyHrStyle {
+        padding:1px 5px 1px 5px; margin-bottom: 1px;margin-top:1px; height:1px;border:none;border-top:1px dashed #ff4254;
+    }
+
+
+</style>
+
+<script>
+    var cookievalue = document.cookie;
+    document.getElementById('displayhead').innerText=cookievalue;
+
+    function SwtichStatus(json)
+    {
+        try {
+
+            //获取显示区域的宽度
+            var width = document.getElementById("listdata").scrollbarWidth;
+            var length = 0;
+            for (var obj in json)
+                if(obj.length > length)
+                    length = obj.length;
+            var Longest = length * 18 + 10;
+            var cellNumber = parseInt(document.getElementById("listdata").scrollWidth / Longest);
+
+
+
+
+            var i = 0;
+            var txt = "";
+            txt += "<p>获取数据时间:" +new Date().toLocaleString()+'星期'+'日一二三四五六'.charAt(new Date().getDay());'',1000 + "</p>";
+            txt += "<table id='commutable' class='table2'>";
+            txt += "";
+            txt += "";
+            for (var obj in json) {
+                if (i % cellNumber == 0)
+                    txt += "<tr>";
+                txt += "<td>";
+                if (json[obj] == "1")
+                    txt += "<button style='width:15px; height:15px; background-color:red; border-radius:30px;'></button>";
+                else
+                    txt += "<button style='width:15px; height:15px; background-color:gray; border-radius:30px;'></button>";
+
+                txt += obj + "</td>";
+                if (i % cellNumber == (cellNumber-1))/**/
+                    txt += "</tr>";
+                i++;
+            }
+            txt += "</table>";
+            document.getElementById("listdata").innerHTML = txt;
+        } catch (e) {
+            alert("html数据解析失败");
+        }
+    }
+
+
+    function BusStatus(json)
+    {
+		try
+		{
+			var txt = "";
+			txt += "<p>获取数据时间:" +new Date().toLocaleString()+'星期'+'日一二三四五六'.charAt(new Date().getDay());'',1000 + "</p>";
+			for(var obj in json)
+			{
+				var cout = 0;
+			    txt += "<div id=\"busdiv\" class=\"busstatusdiv\">";
+			    txt += "<div class=\"divA\">";
+			    txt += "<div>" + "<h3>" + obj + "</h3>" + "</div>";    
+				if(obj!="电池2")
+				{
+					txt += "<table class=\"busstatustable\" cellspacing='0'>";
+					for (var key in json[obj])
+					{
+						if (cout == 0)
+						{
+							txt += "<tr>";
+						}
+						txt += "<td class=\"td1\">" + key + "</td>";
+						txt += "<td class=\"td2\">" + json[obj][key] + "</td>";
+						cout++;
+						if (cout >= 3)
+						{
+							cout = 0;
+							txt += "</tr>";
+						}
+					}
+				}
+				else
+				{
+					for (var key in json[obj])
+					{
+						if(key=="电池排序个数")
+						{
+							txt += "<table style='border:solid #add9c0;border-width:1px 1px 1px 1px;margin:15px 10px 0px 10px;'>";
+							txt += "<tr><td style='font-size:14px;width:897px;padding:10px 5px 10px 5px;'>" + key + ": " + json[obj][key] +"</td></tr>";
+							txt += "</table>"
+						}
+						else
+						{
+							txt += "<table style='border:solid #add9c0;border-width:0px 1px 1px 1px;margin:0px 10px 0px 10px;'>";
+							txt += "<tr><td style='font-size:14px;width:897px;padding:10px 5px 10px 5px;'>" + key + "</td></tr>";
+							txt += "</table>"
+							txt += "<table class=\"busstatustable\" style='margin-top:0px;margin-bottom:0px;border-width:0px 0px 0px 1px;' cellspacing='0'>";
+							for (var val in json[obj][key])
+							{
+								if (cout == 0)
+								{
+									txt += "<tr>";
+								}
+								txt += "<td class=\"td1\" style='border:0px 1px 1px 0px;'>" + val + "</td>";
+								txt += "<td class=\"td2\" style='border:0px 1px 1px 0px;'>" + json[obj][key][val] + "</td>";
+								cout++;
+								if (cout >= 3)
+								{
+									cout = 0;
+									txt += "</tr>";
+								}
+							}
+						}
+					}
+				}
+			    if (cout != 0) txt += "</tr>";
+			    txt += "</table>";
+				txt += "<div style=\"height:10px;background:#D9EDE1;\"></div>"
+			    txt += "</div>";
+				txt += "</div>";
+			}
+		}
+		catch(e)
+		{
+			alert("html数据解析失败");
+		}
+		document.getElementById("listdata").innerHTML = txt;
+    }
+
+    function FaultStatus(json)
+    {
+        try {
+            var i = 0;
+            var txt = "";
+            txt += "<p>获取数据时间:" +new Date().toLocaleString()+'星期'+'日一二三四五六'.charAt(new Date().getDay());'',1000 + "</p>";
+            txt += "<table id='commutable' class='table1' >";
+            txt += "";
+            txt += "";
+            for (var obj in json) {
+                if (i % 4 == 0)
+                    txt += "<tr>";
+                txt += "<td>" + "<strong>" + obj + ": "  + "</strong>" +json[obj] +"</td>";
+                if (i % 4 == 3)
+                    txt += "</tr>";
+                i++;
+            }
+            txt += "</table>";
+            document.getElementById("listdata").innerHTML = txt;
+        } catch (e) {
+            alert("html数据解析失败");
+        }
+    }
+
+    function BatterSingerStatus(json)
+    {
+        try {
+            var i = 0;
+            var txt = "";
+            txt += "<p>获取数据时间:" +new Date().toLocaleString()+'星期'+'日一二三四五六'.charAt(new Date().getDay());'',1000 + "</p>";
+            txt += "<table id='commutable'  class='table1' >";
+            txt += "";
+            txt += "";
+
+            for (var obj in json)
+            {
+                var i;
+                txt +="<tr><th>箱号</th>";
+                for(i=0; i < json[obj].length; i++)
+                    txt += "<th>单体" + (i+1) + "</th>";
+                txt += "</tr>";
+                break;
+            }
+
+            for (var obj in json) {
+                var BatterBox = json[obj];
+                txt += "<tr>";
+                txt += "<td><strong>"+obj+"</strong></td>";
+                var i;
+                for (i = 0; i < json[obj].length; i++)
+                {
+                    for (var cellobj in json[obj][i])
+                    txt += "<td bgcolor='#9932cc'> <center>" + cellobj + "</center> <hr class='MyHrStyle' /><center>" +json[obj][i][cellobj] +"</center></td>";
+                }
+                txt += "</tr>";
+            }
+            txt += "</table>";
+            document.getElementById("listdata").innerHTML = txt;
+        } catch (e) {
+            alert("html数据解析失败");
+        }
+    }
+	function TyrePressureInfo(json)
+	{
+		try
+		{
+		    var cout = 0;
+			var txt = "";
+			for(var obj in json)
+			{
+			    txt += "<div class=\"tyrediv\">";
+			    txt += "<div class=\"divA\">";
+			    txt += "<div>" + "<h3>" + obj + "</h3>" + "</div>";
+                txt += "<table class=\"tyretable\" cellspacing='0'>";
+			    for (var key in json[obj])
+			    {
+			        if (cout == 0)
+			        {
+			            txt += "<tr>";
+			        }
+			        txt += "<td>" + key + "</td>";
+			        txt += "<td>" + json[obj][key] + "</td>";
+                    cout++;
+                    if (cout >= 3)
+                    {
+                        cout = 0;
+                        txt += "</tr>";
+                    }
+			    }
+			    if (cout != 0) txt += "</tr>";
+			    txt += "</table>";
+			    txt += "</div>";
+				txt += "</div>";
+			}
+		}
+		catch(e)
+		{
+			alert("html数据解析失败");
+		}
+		document.getElementById("listdata").innerHTML = txt;
+	}
+    function GpsAndGPRS(json)
+    {
+        try {
+            var NewHtml = "";
+            NewHtml += "<p>获取数据时间:" +new Date().toLocaleString()+'星期'+'日一二三四五六'.charAt(new Date().getDay());'',1000 + "</p>";
+            for (var obj in json)
+            {
+                NewHtml +="<table  name=" + obj + "  class='table1' >";
+                NewHtml +="<tr><th>" + obj + "</th></tr>";
+                var i = 0;
+                for (var key in json[obj])
+                {
+                    if (i % 4 == 0)
+                        NewHtml += "<tr>";
+                    NewHtml += "<td>" + "<strong>" + key + ": "  + "</strong>" +json[obj][key] +"</td>";
+                    if (i % 4 == 3)
+                        NewHtml += "</tr>";
+                    i++;
+                }
+                NewHtml += "</table>";
+                NewHtml += "<hr />"
+            }
+            document.getElementById("listdata").innerHTML = NewHtml;
+
+        } catch (e) {
+            alert("html数据解析失败");
+        }
+    }
+
+
+    function DisplayData(str)
+    {
+        var json;
+        try{
+            json = eval(str);
+        }catch (e) {
+            alert("json数据转换出错:"+str);
+            return;
+        }
+        try{
+            switch(json["datatype"])
+            {
+                case "开关信息":
+                    delete(json["datatype"]);
+                    SwtichStatus(json);
+                    break;
+                case "车辆基本信息":
+                    delete(json["datatype"]);
+                    BusStatus(json);
+                    break;
+                case "故障信息":
+                    delete(json["datatype"]);
+                    FaultStatus(json);
+                    break;
+                case "电池单体信息":
+                    delete(json["datatype"]);
+                    BatterSingerStatus(json);
+                    break;
+				case "胎压信息":
+					delete(json["datatype"]);
+					TyrePressureInfo(json);
+					break;
+                case "其它模块":
+                    delete(json["datatype"]);
+                    GpsAndGPRS(json);
+                    break;
+                default:
+                    alert("未识别此类信息!!!");
+                    return;
+            }
+            setTimeout(GetStatusData("../cgi-bin/readshm.cgi","datatype:"+ cookievalue) ,1000)
+        }catch (e) {
+            alert("err:%s", e);
+        }
+
+    }
+
+    function GetStatusData(url,data)
+    {
+        var xmlhttp;
+        if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {// code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function ()
+        {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+            {
+                var result = xmlhttp.responseText;
+                console.log("得到返回数据:%s", result);
+                DisplayData(result);
+            }
+        };
+        xmlhttp.open("post", url, true);
+        xmlhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+        xmlhttp.send(data);
+    }
+    GetStatusData("../cgi-bin/readshm.cgi", "datatype:"+ cookievalue);
+
+
+  //var str = ({ "datatype":"胎压信息","H车速":"0","车档":"N档","电瓶电压":"14.1V","机油压力":"2.55","前气压":"0.00","后气压":"0.00","车门数量":"2","气量传感":"255","油量传感":"255","总里程(km)":"24640.1","小计里程":"6553.5", })
+  //var str=({"datatype":"胎压信息","第01号轮胎":{"位置":"0","所属":"0","信号":"0","压力":"0","温度":"-40","传感高":"0","传感器中":"0","传感器低":"0","报警":"0"},"第02号轮胎":{"位置":"0","所属":"0","信号":"0","压力":"0","温度":"-40","传感高":"0","传感器中":"0","传感器低":"0","报警":"0"},"第03号轮胎":{"位置":"0","所属":"0","信号":"0","压力":"0","温度":"-40","传感高":"0","传感器中":"0","传感器低":"0","报警":"0"},"第04号轮胎":{"位置":"0","所属":"0","信号":"0","压力":"0","温度":"-40","传感高":"0","传感器中":"0","传感器低":"0","报警":"0"},"第05号轮胎":{"位置":"0","所属":"0","信号":"0","压力":"0","温度":"-40","传感高":"0","传感器中":"0","传感器低":"0","报警":"0"},"第06号轮胎":{"位置":"0","所属":"0","信号":"0","压力":"0","温度":"-40","传感高":"0","传感器中":"0","传感器低":"0","报警":"0"}});
+  //var str=({ "datatype":"开关信息","ACC":"0","ON":"0","Start":"0","危急报警":"0","ABS工作指示":"0","ABS故障指示":"0","ASR工作指示":"0","ASR故障指示":"0","左转向灯":"0","右转向灯":"0","前雾灯":"0","后雾灯":"0","远光灯":"0","近光灯":"0","手刹":"0","脚刹":"0","雨刮低速":"0","雨刮高速":"0","雨刮间歇":"0","雨刮复位":"0","洗涤器":"0","喇叭":"0","干燥器":"1","下客门铃":"0","前门状态":"0","设备按钮":"0","投币机门开关":"0","中门状态":"0","后门状态":"0","位置灯":"0","后仓门":"0","左后蹄报警":"0","右后蹄报警":"0","左前蹄片报警":"0","左后蹄片报警":"0","右前蹄片报警":"0","右后蹄片报警":"0","严重故障":"0","轻微故障":"0","空调":"0","离合器":"0","缓速器":"0","缓速器故障":"0","路牌灯":"0","路牌灯":"0","室内灯1":"0","室内灯2":"0","机油压力报警":"0","水温低报警":"0","前气压报警":"0","后气压报警":"0","气压报警3":"0","前门防夹":"0","中门防夹":"0","空滤器报警":"0","备用Acc":"0","备用危急报警":"0","备用启动":"0","备用ON挡":"0","备用近光灯":"0","发动机故障信号":"0","发动机预热":"0","发动机充电指示":"0","TV2":"0","TV":"0","司机灯":"0","应急门信号":"0","后应急门信号":"0","前应急门信号":"0","仓温报警":"0","售票员灯":"0","电风扇":"0","投币机翻版":"0","前熄火":"0","后熄火":"0","前启动":"0","后启动信号":"0","除霜机2档":"0","除霜机1档":"0","怠速停止":"0","乘务员报警":"0","应急阀":"0","制动2":"0","排气扇":"0","投毕灯照明":"0","变速箱故障报警":"0","变速箱油温高报警":"0" });
+  //var str=({ "datatype":"车辆基本信息","传感器":{"车速":"90","车档":"D档","电瓶电压":"23.7V","机油压力":"0.90","前气压":"0.00","后气压":"0.00","车门数量":"2","气量传感":"0","油量传感":"0","总里程(km)":"8000.0","小计里程":"0.0",},"发动机":{"发动机转速":"--","水温":"100","仓温":"-40","尿素液位":"0.00","总能耗":"800.0L","瞬时能耗":"90.0","平均燃油速率":"0","动机负荷率":"0","油门开度":"0.00","牵引踏板百分比":"0.00","发动机进气温度":"-40","发动机进气压力":"0.00","发动机氧浓度":"-125","电子节气门开度":"0","发动机燃油温度":"-40","天然气温度":"-40","天然气压力":"0.00","机油温度":"65263","发动机扭矩百分比":"-125","发动机最大参考扭矩":"-125",},"电机":{"电机转速":"0","电机扭矩":"0","电机控制器母线电压":"0.0V","电机母线电流":"0","电机控制器基本状态":"0","电机控制器故障":"0","电机控制器温度":"-40","电机温度":"-40","逆变器温度":"-40","电机累计时间":"0","发电机控制器输入电流":"-3200.0","发电机温度":"-40","发电机控制器温度":"-40","电机控制器前端电压":"0.0","电机控制器后端电压":"0.0","司机加速踏板":"0.00","司机制动踏板":"0.00","整车控制器Life":"0","心跳信号Life":"0","转向电机温度":"-40","打气泵温度":"-40","DC/DC温度":"-40","DMC版本":"0","累计充电电能":"0.0","总电耗":"0",},"电机附加1":{"电机工作状态":"0","电机工作字":"0","驱动控制器电流":"-3200.0","回收电流":"-3200.0","电机直流电压":"0.0","电机相电流":"0.0","电机相电压":"0.0","整车控制器状态":"0","蓄电池状态":"0","整车控制器故障包":"0","续驶里程":"0",},"电池":{"SOC":"0","电池组总电压":"0.0","充放电电流":"-3200.0","电池箱体个数":"0","电池管理系统从控制单元的个数":"0","电池系统总串数":"0","电池管理系统编号":"0","电池管理系统LIFE":"0","电池Status_Flag1":"0","电池Status_Flag2":"0","电池Status_Flag3":"0","单体电池最高温度":"-40","单体电池最低温度":"-40","单体电池最高电压":"0.000","单体电池最低电压":"0.000","最高单体电压所在箱号":"0","最高单体电压所在箱内位置":"0","H最低单体电压所在箱号":"0","H最低单体电压所在箱内位置":"0","H最高温度所在箱号":"0","H最高温度所在箱内位置":"0","H最低温度所在箱号":"0","H最低温度所在箱内位置":"0","H电池箱内环境最高温度":"0","充电端允许最高电压":"0","允许最高温度":"-40","电池模块并联数":"0","实际能量":"0","额定能量":"0","电池当前最大允许放电电压":"-3200.0","电池当前最大允许放电电流":"-3200.0","DMU通讯版本1-8":"0","DMU通讯版本9-16":"0","DMU通讯版本17-24":"0",},"电池2":{"电池排序个数":"4","第0高电池排序内容":{"电压":"0.0","所在箱体":"0","所在箱内位置":"0"},"第0低电池排序内容":{"电压":"0.0","所在箱体":"0","所在箱内位置":"0"},"第0高电池排序内容":{"温度":"0","所在箱体":"0","所在箱内位置":"0"},"第0低电池排序内容":{"温度":"0","所在箱体":"0","所在箱内位置":"0"},"第1高电池排序内容":{"电压":"0.0","所在箱体":"0","所在箱内位置":"0"},"第1低电池排序内容":{"电压":"0.0","所在箱体":"0","所在箱内位置":"0"},"第1高电池排序内容":{"温度":"1","所在箱体":"0","所在箱内位置":"0"},"第1低电池排序内容":{"温度":"1","所在箱体":"0","所在箱内位置":"0"},"第2高电池排序内容":{"电压":"0.0","所在箱体":"0","所在箱内位置":"0"},"第2低电池排序内容":{"电压":"0.0","所在箱体":"0","所在箱内位置":"0"},"第2高电池排序内容":{"温度":"2","所在箱体":"0","所在箱内位置":"0"},"第2低电池排序内容":{"温度":"2","所在箱体":"0","所在箱内位置":"0"},"第3高电池排序内容":{"电压":"0.0","所在箱体":"0","所在箱内位置":"0"},"第3低电池排序内容":{"电压":"0.0","所在箱体":"0","所在箱内位置":"0"},"第3高电池排序内容":{"温度":"3","所在箱体":"0","所在箱内位置":"0"},"第3低电池排序内容":{"温度":"3","所在箱体":"0","所在箱内位置":"0"},},"电容":{"电池温度":"-40","HybirdReady":"0","PECWarmUp":"0","电容内部电压":"0.0","电容SOE":"0.0","电容电池工作状态":"0",},"助力转向泵之类":{"DCToDC_LIFE":"0","DCDC_低压端实时电压":"0.0","DCDC_低压端实时电流":"0.0","DCDC_高压端实时电压":"0.0","DCDC_变压器温度":"-40","DCDC_DSP结温":"-40","DCDC_输入电压":"0.0","DCDC_输出电压":"0.0","DCDC_输出电流":"0.0","DCDC_散热温度":"-40","辅助系统状_DC/DC状态":"0","DCDC_状态包":"0","DCDC故障包1":"0","DCDC故障包2":"0","助力转向泵":"0","助力转向泵_电机转速":"0","助力转向泵_输出相电流":"0.0","助力转向泵_控制器温度":"-40","助力转向泵状态包":"0","助力转向泵_故障包":"0","助力转向泵_输入电压":"0.0","助力转向泵_输出电压":"0.0","助力转向泵_输出电流":"0.0","绝缘检测状态":"0","打气泵_电源输入电压":"0.0","打气泵_电源输出电压":"0.0","打气泵_电源输入电流":"0.0","打气泵_电源输出电流":"0.0","打气泵_电源温度":"-40",},"充电机":{"充电机LIFE1":"0","充电机输出电压":"0.0","充电机输出电流":"0.0","充电机故障包":"0",},"润滑剂":{"集中润滑状态":"0","集中润滑故障":"0",},"打气泵":{"打气泵_电机转速":"0","打气泵_控制器温度":"-40","打气泵_控制器LIFE":"0","打气泵_控制器基本状态":"0","打气泵_控制器故障代码":"0","打气泵_储气筒前气压":"0.00","打气泵_储气筒后气压":"0.00","油泵_电机转速":"0","油泵_控制器母线电压":"0.0","油泵_控制器电流":"0","油泵_控制器温度":"-40","油泵_控制器心跳":"0","油泵_控制器状态":"0","油泵_控制器故障代码":"0","油泵_输入电压":"0.0","油泵_输入电流":"0.0","油泵_输出电压":"0.0","油泵_输出电流":"0.0"}, });
+  //DisplayData(str);
+</script>
+
+</body>
+</html>

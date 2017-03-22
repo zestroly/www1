@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<HEAD>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta http-equiv="content-encoding" charset="utf-8"/>
+    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="0">
+    <title>配置文件</title>
+</HEAD>
+
+<body>
+<center><h2>commu文件配置</h2></center>
+<button type='button' onclick='SaveDBdata()'> 保存数据</button>
+<button type="button" onclick="DisplayDBdata()">查看数据</button>
+<button type="button" onclick="ClearDBdata()">清理数据</button>
+<button type="button" onclick="DBdatatoFile()">导出数据</button>
+<hr/>
+<div id="commu"></div>
+<script src="../js/FileSaver.js"></script>
+<script type="text/javascript">
+    function GetDataFromTable() {
+        var jsondata = "";
+        try {
+            //获取tr 集合
+            var tr_Nodes = document.getElementById("commutable").childNodes.item(0).childNodes;
+            if (tr_Nodes.length < 1)
+                return "";
+            for (var i = 0; i < tr_Nodes.length; i++) {
+                var td_Nodes = tr_Nodes.item(i).childNodes;
+                for (var j = 0; j < td_Nodes.length; j++) {
+                    var td_cell = td_Nodes.item(j);
+                    var cell_button_input = td_cell.childNodes;
+                    var input_cell = td_Nodes.item(j).childNodes.item(2);
+                    var strong_cell = td_Nodes.item(j).childNodes.item(0);
+                    var input_name = input_cell.name;
+                    var input_vaule = input_cell.value;
+                    var strong_value = strong_cell.innerText;
+                    jsondata += input_name + "=" + input_vaule + "     #" + strong_value + "&";
+                    //debugger;
+                }
+            }
+        } catch (e) {
+            console.log("获取表单中的数据失败");
+            return "";
+        }
+        // console.log("获取表单中的数据成功，data: %s",jsondata);
+        return jsondata;
+    }
+
+    function submitdata() {
+        var data = GetDataFromTable();
+        if (data.length > 2) {
+            var datasend = "filename=commu&cmd=write&" + data;
+            console.log("提交数据为:%s", datasend);
+            GetCGIdata(datasend);
+        } else {
+            console.log("表单中没有可获取的数据");
+        }
+    }
+
+    function PainTable(result) {
+        try {
+            var json = eval(result);
+            var i = 0;
+            var txt = "";
+            txt += "<p>获取数据时间:" + new Date().toLocaleString() + '星期' + '日一二三四五六'.charAt(new Date().getDay());
+            '', 1000 + "</p>";
+            txt += "<button type='button' style='background:#F1F666;color: red; font-size:20px' onclick='submitdata()'>下发到设备</button> <br \>";
+            txt += "<table id='commutable' border='1' cellpadding='8' >";
+            for (var obj in json) {
+                var jobj = json[obj];
+                if (i % 3 == 0)
+                    txt += "<tr>";
+                for (var cell in json[obj]) {
+                    var value = jobj[cell];
+                    txt += "<td>";
+                    txt += "<strong  value=" + json[obj][cell] + "  style='font-size:15px;'>" + json[obj][cell] + "</strong>" + "<strong>:</strong>";
+                    txt += "<input type=text  id=" + obj + " size=16 name=" + obj + " style='font-size:15px;width:' value=" + cell + ">";
+                    txt += "</td>";
+                }
+                if (i % 2 == 3)
+                    txt += "</tr>";
+                // debugger;
+                i++;
+            }
+            txt += "</table>";
+            document.getElementById("commu").innerHTML = txt;
+        } catch (e) {
+            console.log("json数据转换错误");
+        }
+    }
+
+    function GetCGIdata(data) {
+        var xmlhttp;
+        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        }
+        else {// code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                var result = xmlhttp.responseText;
+                console.log("得到返回数据:%s", result);
+                PainTable(result)
+            }
+        }
+        var url = "../cgi-bin/test.cgi";
+        xmlhttp.open("post", url, true);
+        xmlhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+        xmlhttp.send(data);
+    }
+    GetCGIdata("filename=commu&cmd=read");
+
+
+    //数据库操作
+    //打开数据库
+    var db = openDatabase('contactdb', '', 'local database demo', 204800);
+    var isshow = 0;//0小窗口没有显示，1小窗口已显
+    //sql语句执行成功后执行的回调函数
+    function onSuccess(tx, rs) {
+        alert("操作成功");
+        loadMsgDiv();
+    }
+    //sql语句执行失败后执行的回调函数
+    function onError(tx, error) {
+        alert("操作失败，失败信息：" + error.message);
+    }
+
+    function SaveDBdata() {
+        //如果数据表不存在，则创建数据表
+        var EquipID      = document.getElementById('EquipID').value;
+        var PhoneCall    = document.getElementById('PhoneCall').value;
+        var ChePaiHao    = document.getElementById('ChePaiHao').value;
+        var CarTableNum  = document.getElementById('CarTableNum').value;
+        var LineNum      = document.getElementById('LineNum').value;
+        var SaveTime     = new Date().getTime();
+
+        //创建时间
+        var time = new Date().getTime();
+        db.transaction(function (tx) {
+            tx.executeSql('create table if not exists contact(EquipID text NOT NULL UNIQUE,PhoneCall text NOT NULL UNIQUE,ChePaiHao text NOT NULL UNIQUE,CarTableNum text ,LineNum text,SaveTime INTEGER)', []);
+            tx.executeSql('insert into contact(EquipID,PhoneCall,ChePaiHao,CarTableNum ,LineNum ,SaveTime) values(?,?,?,?,?,?)', [EquipID,PhoneCall,ChePaiHao,CarTableNum,LineNum ,SaveTime], onSuccess, onError);
+        });
+    }
+
+
+    function DisplayDBdata() {
+        isshow = 1;
+        if (!document.getElementById('msgDiv'))//小窗口不存在
+        {
+            var msgw, msgh, bordercolor;
+            msgw = 800;//提示窗口的宽度
+            msgh = 300;//提示窗口的高度
+            var sWidth, sHeight;
+
+            if (top.location == self.location)
+                doc = document;
+            var docElement = document.documentElement;
+            sWidth = docElement.clientWidth;
+            sHeight = docElement.clientHeight;
+            if (docElement.scrollHeight > sHeight)
+                sHeight = docElement.scrollHeight;
+            var bgObj = document.createElement('div');
+            bgObj.setAttribute('id', 'bgDiv');
+            bgObj.style.position = 'absolute';
+            bgObj.style.top = '0';
+            bgObj.style.left = '0';
+            bgObj.style.background = '#777';
+            bgObj.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75';
+            bgObj.style.opacity = '0.6';
+            bgObj.style.width = sWidth + 'px';
+            bgObj.style.height = sHeight + 'px';
+            bgObj.style.zIndex = '10000';
+            document.body.appendChild(bgObj);
+
+            var msgObj = document.createElement('div');
+            msgObj.setAttribute('id', 'msgDiv');
+            msgObj.setAttribute('align', 'center');
+            msgObj.style.position = 'absolute';  //
+            msgObj.style.left = '50%';
+            msgObj.style.background = '#fff';
+            msgObj.style.marginLeft = '-400px';
+
+            msgObj.style.top = '90px';
+            msgObj.style.width = msgw + 'px';
+            msgObj.style.height = msgh + 'px';
+            msgObj.style.zIndex = '10001';
+
+            document.body.appendChild(msgObj);
+        } else {
+            document.getElementById('bgDiv').style.display = '';
+            document.getElementById('msgDiv').style.display = '';
+            document.getElementById('msgDiv').style.top = '90px';
+        }
+        loadMsgDiv();
+
+    }
+
+
+    function loadMsgDiv() {
+
+        //查询数据库数据
+        db.transaction(function (tx) {
+            //如果数据表不存在，则创建数据表
+            tx.executeSql('create table if not exists contact(EquipID text NOT NULL UNIQUE,PhoneCall text NOT NULL UNIQUE,ChePaiHao text NOT NULL UNIQUE,CarTableNum text ,LineNum text,SaveTime INTEGER)', []);
+            //查询所有联系人记录
+            tx.executeSql('select * from contact', [], function (tx, rs) {
+                var resutlMsg = "<a href=\'javascript:void(0);\' onclick='delWinD();return false;'>点我关闭窗口</a>";
+                if (rs.rows.length > 0) {
+                    resutlMsg += "<table border='1'>";
+                    resutlMsg += "<tr><th>序号</th><th>设备ID</th><th>电话卡号</th><th>车牌号</th><th>台架号</th><th>线路号</th><th>添加时间</th><th>操作</th></tr>";
+                    for (var i = 0; i < rs.rows.length; i++) {
+                        var row = rs.rows.item(i);
+                        //转换时间，并格式化输出
+                        var time = new Date();
+                        time.setTime(row.SaveTime);
+                        var timeStr = time.format("yyyy-MM-dd hh:mm:ss");
+                        //EquipID,PhoneCall,ChePaiHao,CarTableNum,LineNum ,SaveTime
+                        //拼装一个表格的行节点
+                        resutlMsg += "<tr>";
+                        resutlMsg += "<td><input style='width: 30px;' type='text' value=" + (i + 1) + "></td>";
+                        resutlMsg += "<td><input onchange=FlushSQL(" + row.SaveTime + ",'EquipID',this.value)  style='width: 80px;'    type='text'  value=" + row.EquipID + "></td>";
+                        resutlMsg += "<td><input onchange=FlushSQL(" + row.SaveTime + ",'PhoneCall',this.value)  style='width: 100px;'   type='text'  value=" + row.PhoneCall + "></td>";
+                        resutlMsg += "<td><input onchange=FlushSQL(" + row.SaveTime + ",'ChePaiHao',this.value)  style='width: 80px;'    type='text'  value=" + row.ChePaiHao + "></td>";
+                        resutlMsg += "<td><input onchange=FlushSQL(" + row.SaveTime + ",'CarTableNum',this.value)  style='width: 100px;'   type='text'  value=" + row.CarTableNum + "></td>";
+                        resutlMsg += "<td><input onchange=FlushSQL(" + row.SaveTime + ",'LineNum',this.value)  style='width: 80px;'    type='text'  value="+ row.LineNum + "></td>";
+                        resutlMsg += "<td>" + timeStr + "</td>";
+                        resutlMsg += "<td><input type='button' value='删除' onclick='del("+ row.EquipID + ")' /> </td>";
+                        resutlMsg += "</tr>";
+
+                    }
+                } else {
+                    resutlMsg += "目前数据为空，赶紧添加吧";
+                }
+                document.getElementById('msgDiv').innerHTML = resutlMsg;
+            });
+        });
+    }
+
+    function FlushSQL(createtime, DataID, newdata) {
+        console.log("修改数据行:type(%s) = %s",typeof(createtime), createtime);
+        console.log("修改数据列:type(%s) = %s",typeof(DataID), DataID);
+        console.log("修改数据内容:type(%s) = %s",typeof(newdata), newdata);
+        db.transaction(function (tx) {
+            tx.executeSql("update contact set "+DataID+" = ? where SaveTime = ? ", [newdata ,createtime], onSuccess, onError);
+        });
+    }
+    //删除联系人信息
+    function del(EquipID) {
+        var EqID = EquipID;
+        db.transaction(function (tx) {
+            //注意这里需要显示的将传入的参数phone转变为字符串类型
+            console.log("数据库删除数据：车牌号=%s",EqID);
+            tx.executeSql('delete from contact where EquipID=?', [String(EqID)], onSuccess, onError);
+        });
+
+    }
+
+    function ClearDBdata() {
+        db.transaction(function (tx) {
+            tx.executeSql('drop table contact', [], onSuccess, onError);
+        });
+    }
+
+    function delWinD() {
+        document.getElementById('bgDiv').style.display = 'none';
+        document.getElementById('msgDiv').style.display = 'none';
+        isshow = 0;
+    }
+
+
+    //格式化时间的format函数
+    Date.prototype.format = function (format) {
+        var o = {
+            "M+": this.getMonth() + 1, //month
+            "d+": this.getDate(),    //day
+            "h+": this.getHours(),   //hour
+            "m+": this.getMinutes(), //minute
+            "s+": this.getSeconds(), //second
+            "q+": Math.floor((this.getMonth() + 3) / 3),  //quarter
+            "S": this.getMilliseconds() //millisecond
+        }
+        if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
+                (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)if (new RegExp("(" + k + ")").test(format))
+            format = format.replace(RegExp.$1,
+                    RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+        return format;
+    }
+    function DBdatatoFile() {
+        //查询数据库数据
+        db.transaction(function (tx) {
+            //查询所有联系人记录
+            tx.executeSql('select * from contact', [], function (tx, rs) {
+                if (rs.rows.length > 0) {
+                    var resutlMsg = "序号,设备ID,电话卡号,车牌号,台架号,线路号,保存时间\r\n";
+                    for (var i = 0; i < rs.rows.length; i++) {
+                        var row = rs.rows.item(i);
+                        //转换时间，并格式化输出
+                        var time = new Date();
+                        time.setTime(row.SaveTime);
+                        var timeStr = time.format("yyyy-MM-dd hh:mm:ss");
+                        resutlMsg += (i+1)+","+row.EquipID+","+row.PhoneCall +","+row.ChePaiHao+","+row.CarTableNum+","+row.LineNum+","+timeStr + "\r\n";
+                    }
+                    var blob = new Blob([resutlMsg], {type:"text/plain;charset=utf-8"});
+
+                    var currentTime = new Date();
+                    var timeStr     = currentTime.format("yyyyMMddhhmmss");
+                    var filename    =timeStr+'.csv';
+                    saveAs(blob, filename);
+
+                } else {
+                    alert("数据库为空，赶紧添加吧！");
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>
