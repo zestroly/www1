@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="content-encoding" charset="utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+<!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+
+    <!--
+     <link rel='stylesheet' type='text/css' href='http://fonts.useso.com/css?family=Open+Sans:300,400,600,700,400italic'>
+    -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        a {
+            text-decoration: none;
+        }
+        #conter {
+            width: 1000px;
+            margin: auto;
+        }
+
+        #help-left {
+            width: 200px;
+            font-family: 'microsoft YaHei';
+            float: left;
+        }
+		/*solid定义边框为实线*/
+        .menu {
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+        }
+        .menu:last-child {
+            border-bottom: 1px solid #ccc;
+        }
+
+        .menu summary {
+            height: 40px;
+            line-height: 40px;
+            text-indent: 10px;
+            outline: none;
+            font-size: 14px;
+            font-weight: 700;
+            border-top: 1px solid #ddd;
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FEFEFE), color-stop(1, #CCCCCC));
+            cursor: pointer;
+        }
+
+        .menu summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /*可用图片或字符,如果使用图片，请把content的值设置成空字符*/
+        .menu summary:before {
+            content: "+";
+            /*background: url(images/Ias_right.png) no-repeat center center;*/ /*收起时的图片*/
+            /*vertical-align: middle;*/
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .menu[open] summary:before {
+            content: "-";
+            /*background: url(images/Ias_down.png) no-repeat center center;*/ /*展开时的图片*/
+        }
+
+        .menu ul {
+            padding: 10px 0;
+        }
+
+        .menu ul li {
+            list-style: none;
+            text-indent: 25px;
+            font-size: 12px;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        .menu ul li a {
+            display: block;
+            color: #666;
+        }
+
+        .menu ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+
+</head>
+<body>
+
+<div class="main-body">
+    <div class="container">
+        <div class="row">
+            <div class="main-page">
+                <aside class="main-navigation">
+                    <div class="main-menu">
+                        <div class="menu-container"> <!-- -->
+                            <div class="block-keep-ratio block-keep-ratio-2-1 block-width-full home">
+                                <a href="index.html" class="block-keep-ratio__content  main-menu-link">
+                                    <span class="main-menu-link-text">首页</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div>
+                            <div id="tree">
+                                <details class="menu">
+                                    <summary>设备状态</summary>
+                                    <ul>
+                                        <li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="return mainframeshow('cgi-bin/devstatus.cgi')">系统信息</a></li>
+                                        <li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="return mainframeshow('myhtml/DisplaceStateConfig.html')">state文件配置</a>
+                                        </li>
+                                        <li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="return mainframeshow('myhtml/DisplaceCommuConfig.html')">commu文件配置</a>
+                                        </li>
+                                    </ul>
+                                </details>
+                                <details class="menu">
+                                    <summary>车辆状态</summary>
+                                    <ul>
+                                        <li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="return mainframeshowParam('myhtml/StatusEnquiry.html', this)">开关信息</a>
+                                        </li>
+                                        <li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="mainframeshowParam('myhtml/StatusEnquiry.html', this)">车辆基本信息</a>
+                                        </li>
+                                        <li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="return mainframeshowParam('myhtml/StatusEnquiry.html', this)">故障信息</a>
+                                        </li>
+                                        <li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="return mainframeshowParam('myhtml/StatusEnquiry.html', this)">电池单体信息</a>
+                                        </li>
+										<li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="return mainframeshowParam('myhtml/StatusEnquiry.html', this)">胎压信息</a>
+                                        </li>
+                                        <li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="return mainframeshowParam('myhtml/StatusEnquiry.html', this)">其它模块</a>
+                                        </li>
+                                    </ul>
+                                </details>
+                                <details class="menu">
+                                    <summary>升级服务</summary>
+                                    <ul>
+                                        <li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="return mainframeshow('myhtml/updatefile.html')">软件升级</a></li>
+                                    </ul>
+                                </details>
+                                <details class="menu">
+                                    <summary>系统设置</summary>
+                                    <ul>
+                                        <li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="return mainframeshow('cgi-bin/networking.cgi')">网络设置</a></li>
+                                        <li><a style="font-size:15px;color:#ffffff" href="#"
+                                               onclick="return mainframeshow('cgi-bin/systime.cgi')">系统时间更改</a></li>
+                                    </ul>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <div class="content-main">
+                    <iframe width=100% height=100% style="margin:0px 0px" id="mainFrame" name=mainFrame class="banner-2-container" src="">
+                    </iframe>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script  type="text/javascript">
+    function mainframeshow(html) {
+        parent.document.getElementById("mainFrame").src = html;
+    }
+
+    function mainframeshowParam(html , pl) {
+        document.cookie=pl.innerText;
+        parent.document.getElementById("mainFrame").src = html;
+    }
+
+</script>
+
+</body>
+</html>
